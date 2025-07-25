@@ -5,9 +5,7 @@ export const load = (async ({ fetch }) => {
 	let sessionID = null;
 	try {
 		// Attempt to fetch the API root to check if the server is reachable
-		const res = await fetch(`${PUBLIC_API}/`, {
-			mode: 'no-cors'
-		});
+		const res = await fetch(`${PUBLIC_API}/`);
 		if (res.ok) {
 			sessionID = (await res.json())?.session_id;
 		}
