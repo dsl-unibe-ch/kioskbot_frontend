@@ -57,7 +57,7 @@
 	};
 
 	let helpful = $state(1);
-	let feedbackMessage = $state('');
+	let feedbackMessages = $state([]);
 </script>
 
 <h1 class="mb-9 scroll-m-20 text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
@@ -87,7 +87,6 @@
 								</Sheet.Header>
 								<div class="h-full overflow-y-auto">
 									{#each message.sources as source}
-										{$inspect(source)}
 										<div class="mb-2">
 											<dl class="pl-2">
 												<dt class="text-sm font-semibold">Titel</dt>
@@ -125,22 +124,22 @@
 						</Sheet.Root>
 					{/if}
 					{#if message.issuer === 'bot'}
-						<p class="semibold">War die Antwort hilfreich?</p>
+						<p class="semibold mb-1">War die Antwort hilfreich?</p>
 						<form
 							onsubmit={(e) => {
 								e.preventDefault();
 								//validate if required fields are filled
-								if (helpful === 0 && !feedbackMessage.trim()) {
+								if (helpful === 0 && !feedbackMessages[index].trim()) {
 									alert(
 										'Bitte geben Sie einen Kommentar ein, wenn die Antwort nicht hilfreich war.'
 									);
 									return;
 								}
 								//submit feedback
-								submitFeedback(helpful, feedbackMessage);
+								submitFeedback(helpful, feedbackMessages[index]);
 							}}
 						>
-							<div class="flex space-x-2">
+							<div class="mb-2 flex space-x-2">
 								<Button
 									variant="outline"
 									size="sm"
@@ -164,10 +163,10 @@
 									Nein
 								</Button>
 							</div>
-							<p>Kommentare</p>
+							<p class="mb-1">Kommentare</p>
 							<Textarea
 								placeholder="Feedback eingeben..."
-								bind:value={feedbackMessage}
+								bind:value={feedbackMessages[index]}
 								onkeydown={(e) => {
 									if (e.key === 'Enter' && !e.shiftKey) {
 										e.preventDefault();
@@ -177,6 +176,7 @@
 								}}
 								required={helpful === 0}
 								id="feedback-comments_{index}"
+								class="mb-2"
 							/>
 							<Button type="submit" size="sm">Absenden</Button>
 						</form>
