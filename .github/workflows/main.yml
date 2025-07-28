@@ -4,6 +4,8 @@ on:
   push:
     branches: ['main', 'master', 'testenv']
   workflow_dispatch:
+env:
+  PUBLIC_API: ${{ vars.PUBLIC_API }}
 
 jobs:
   build_site:
