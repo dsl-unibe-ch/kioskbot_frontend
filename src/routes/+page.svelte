@@ -1,9 +1,12 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import { TextareaAutosize } from 'runed';
 	import { PUBLIC_API } from '$env/static/public';
 	import Send from '@lucide/svelte/icons/send';
+	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import { onMount } from 'svelte';
 	let { data } = $props();
 	let { sessionID } = data;
@@ -46,14 +49,73 @@
 			</p>
 		{:else}
 			{#each messages as message}
-				<div class="w-full max-w-2xl rounded-lg border border-gray-200 bg-white p-4 shadow-md">
-					<p class="text-gray-700">{message.text}</p>
+				<div
+					class={[
+						'w-full max-w-2xl rounded-lg border border-gray-200  p-4 shadow-md',
+						message.issuer === 'bot' ? 'bg-secondary' : 'bg-gray-50'
+					]}
+				>
+					<p class="mb-2 text-gray-700">{message.text}</p>
+					{#if message.sources && message.sources.length > 0}
+						<Sheet.Root>
+							<Sheet.Trigger class={buttonVariants({ variant: 'default' })}>Quellen</Sheet.Trigger>
+							<Sheet.Content class="w-full! sm:w-[540px]!">
+								<Sheet.Header>
+									<Sheet.Title>verwendete Quellen</Sheet.Title>
+								</Sheet.Header>
+								<div class="h-full overflow-y-auto">
+									{#each message.sources as source}
+										{$inspect(source)}
+										<div class="mb-2">
+											<dl class="pl-2">
+												<dt class="text-sm font-semibold">Titel</dt>
+												<dd class="mb-1">
+													{#if source.document_url.startsWith('http')}
+														<a
+															href={source.document_url}
+															class="text-blue-600 hover:underline"
+															target="_blank"
+															rel="noopener noreferrer"
+														>
+															{source.title}
+														</a>
+													{:else}
+														{source.title}
+													{/if}
+												</dd>
+												<dt class="text-xs font-semibold text-gray-500">Kategorie</dt>
+												<dd class="mb-1 text-xs">{source.category}</dd>
+												<dt class="text-xs font-semibold text-gray-500">Ort</dt>
+												<dd class="mb-1">{source.document_location}</dd>
+												<dt class="text-xs font-semibold text-gray-500">Datum</dt>
+												<dd class="mb-1 text-xs">{source.gathered_on}</dd>
+												<dt class="text-xs font-semibold text-gray-500">Score</dt>
+												<dd class="mb-1 text-xs">{source.score.toFixed(2)}</dd>
+												<dt class="text-xs font-semibold text-gray-500">Letzte Änderung</dt>
+												<dd class="mb-1 text-xs">{source.modified}</dd>
+												<dt class="text-xs font-semibold text-gray-500">Inhalt</dt>
+												<dd class="mb-1 text-xs">{source.page_content}</dd>
+											</dl>
+										</div>
+									{/each}
+								</div>
+							</Sheet.Content>
+						</Sheet.Root>
+					{/if}
 				</div>
 			{/each}
+			{#if locked}
+				<div class="w-full max-w-2xl rounded-lg border border-gray-200 bg-white p-4 shadow-md">
+					<Skeleton class="mb-2 h-4 w-[100px] rounded-full" />
+					<Skeleton class="mb-2 h-4 w-[200px] rounded-full" />
+					<Skeleton class="mb-2 h-4 w-[200px] rounded-full" />
+				</div>
+			{/if}
 		{/if}
 		<form
 			onsubmit={async (e) => {
 				e.preventDefault();
+				if (!qVal.trim()) return; // Ignore empty messages
 				locked = true;
 				messages = [
 					...messages,
@@ -63,7 +125,6 @@
 					}
 				];
 				// Call the RAG agent API
-				if (!qVal.trim()) return; // Prevent empty messages
 				const response = await fetch(`${PUBLIC_API}/rag-agent`, {
 					method: 'POST',
 					headers: {
@@ -83,7 +144,7 @@
 				qVal = '';
 				locked = false;
 			}}
-			class="flex w-2xl space-x-2"
+			class="flex w-full max-w-2xl space-x-2"
 		>
 			<Textarea
 				placeholder="Nachricht eingeben..."
@@ -91,14 +152,19 @@
 				onkeydown={(e) => {
 					if (e.key === 'Enter' && !e.shiftKey) {
 						e.preventDefault();
-						e.target.form?.requestSubmit();
+						const target = e.target as HTMLTextAreaElement;
+						target.form?.requestSubmit();
 					}
 				}}
 				data-sveltekit-keepfocus
 			/>
-			<Button type="submit" size="icon" class="hover:cursor-pointer" disabled={locked}
-				><Send /></Button
-			>
+			<Button type="submit" size="icon" class="hover:cursor-pointer" disabled={locked}>
+				{#if locked}
+					<LoaderCircle class="animate-spin" />
+				{:else}
+					<Send />
+				{/if}
+			</Button>
 		</form>
 	{:else}
 		<p>
