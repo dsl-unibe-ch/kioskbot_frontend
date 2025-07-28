@@ -36,6 +36,28 @@
 			input: () => qVal
 		});
 	});
+
+	const submitFeedback = async (rating: number, comments: string) => {
+		const response = await fetch(`${PUBLIC_API}/send_feedback`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				session_id: sessionID,
+				rating,
+				comments
+			})
+		});
+		if (response.ok) {
+			console.log('Feedback sent successfully');
+		} else {
+			console.error('Failed to send feedback');
+		}
+	};
+
+	let helpful = $state(1);
+	let feedbackMessage = $state('');
 </script>
 
 <h1 class="mb-9 scroll-m-20 text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
@@ -48,7 +70,7 @@
 				Keine Nachrichten vorhanden. Bitte senden Sie eine Nachricht an den Kioskbot.
 			</p>
 		{:else}
-			{#each messages as message}
+			{#each messages as message, index}
 				<div
 					class={[
 						'w-full max-w-2xl rounded-lg border border-gray-200  p-4 shadow-md',
@@ -101,6 +123,63 @@
 								</div>
 							</Sheet.Content>
 						</Sheet.Root>
+					{/if}
+					{#if message.issuer === 'bot'}
+						<p class="semibold">War die Antwort hilfreich?</p>
+						<form
+							onsubmit={(e) => {
+								e.preventDefault();
+								//validate if required fields are filled
+								if (helpful === 0 && !feedbackMessage.trim()) {
+									alert(
+										'Bitte geben Sie einen Kommentar ein, wenn die Antwort nicht hilfreich war.'
+									);
+									return;
+								}
+								//submit feedback
+								submitFeedback(helpful, feedbackMessage);
+							}}
+						>
+							<div class="flex space-x-2">
+								<Button
+									variant="outline"
+									size="sm"
+									onclick={(e) => {
+										helpful = 1;
+										e.preventDefault();
+										const target = e.target as HTMLTextAreaElement;
+										target.form?.requestSubmit();
+									}}
+								>
+									Ja
+								</Button>
+								<Button
+									variant="outline"
+									size="sm"
+									onclick={() => {
+										helpful = 0;
+										document.getElementById(`feedback-comments_${index}`)?.focus();
+									}}
+								>
+									Nein
+								</Button>
+							</div>
+							<p>Kommentare</p>
+							<Textarea
+								placeholder="Feedback eingeben..."
+								bind:value={feedbackMessage}
+								onkeydown={(e) => {
+									if (e.key === 'Enter' && !e.shiftKey) {
+										e.preventDefault();
+										const target = e.target as HTMLTextAreaElement;
+										target.form?.requestSubmit();
+									}
+								}}
+								required={helpful === 0}
+								id="feedback-comments_{index}"
+							/>
+							<Button type="submit" size="sm">Absenden</Button>
+						</form>
 					{/if}
 				</div>
 			{/each}
