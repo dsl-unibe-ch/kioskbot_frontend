@@ -8,6 +8,7 @@ export const load = (async ({ fetch }) => {
 		const res = await fetch(`${PUBLIC_API}/`);
 		if (res.ok) {
 			sessionID = (await res.json())?.session_id;
+			console.log('Session ID:', sessionID);
 		}
 	} catch (error) {
 		sessionID = null;
