@@ -58,7 +58,7 @@
 	};
 
 	let helpful = $state(1);
-	let feedbackMessages = $state([]);
+	let feedbackMessages: string[] = $state([]);
 </script>
 
 <AlertDialog.Root open>
@@ -146,7 +146,7 @@
 				<div
 					class={[
 						'w-full max-w-2xl rounded-lg border border-gray-200  p-4 shadow-md',
-						message.issuer === 'bot' ? 'bg-secondary' : 'bg-gray-50'
+						message.issuer === 'bot' ? 'bg-secondary' : 'bg-white'
 					]}
 				>
 					<p class="mb-2 text-gray-700">{message.text}</p>
