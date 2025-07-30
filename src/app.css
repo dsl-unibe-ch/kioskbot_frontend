@@ -2,9 +2,26 @@
 
 @import 'tw-animate-css';
 
-@custom-variant dark (&:is(.dark *));
+@font-face {
+	font-family: FrutigerNeue;
+	src: url('/FrutigerNeueLTW06-Bold.woff2') format('woff2');
+	font-weight: 500 700;
+}
+
+@font-face {
+	font-family: FrutigerNeue;
+	src: url('/FrutigerNeueLTW06-Light.woff2') format('woff2');
+	font-weight: 100 300;
+}
+
+@font-face {
+	font-family: FrutigerNeue;
+	src: url('/FrutigerNeueLTW06-Regular.woff2') format('woff2');
+	font-weight: 400;
+}
 
 :root {
+	--font-sans: 'FrutigerNeue', sans-serif;
 	--radius: 0.65rem;
 	--background: oklch(1 0 0);
 	--foreground: oklch(0.141 0.005 285.823);
