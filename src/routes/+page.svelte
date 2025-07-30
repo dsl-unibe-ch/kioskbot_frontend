@@ -11,20 +11,13 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { onMount } from 'svelte';
 	import { marked } from 'marked';
+	import { fade, fly, scale, slide } from 'svelte/transition';
+
 	let { data } = $props();
 	let { sessionID } = data;
 	let messages: {
-		text: string;
-		sources?: {
-			document_location: string;
-			page_content: string;
-			document_url: string;
-			category: string;
-			title: string;
-			gathered_on: string;
-			modified: string;
-			score: number;
-		}[];
+		text?: string;
+		response?: Promise<any>;
 		issuer: string;
 	}[] = $state([]);
 	let qVal = $state('');
@@ -66,6 +59,11 @@
 
 	let helpful: number[] = $state([]);
 	let feedbackMessages: string[] = $state([]);
+
+	const focus = (node: HTMLElement) => {
+		console.log('Focusing node:', node);
+		node.scrollIntoView();
+	};
 </script>
 
 <AlertDialog.Root open>
@@ -139,13 +137,15 @@
 	</AlertDialog.Content>
 </AlertDialog.Root>
 
-<h1 class="mb-9 scroll-m-20 text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
+<h1
+	class="sticky top-0 z-10 mb-9 scroll-m-20 bg-white pb-4 text-center text-4xl font-extrabold tracking-tight lg:text-5xl"
+>
 	Kioskbot der Universität Bern
 </h1>
 <div class="flex flex-col items-center justify-center gap-4 p-4">
 	{#if sessionID}
 		{#if messages.length === 0}
-			<p class="text-gray-500">
+			<p class="p-4 text-gray-500" in:fly|global={{ x: 800 }} out:fade>
 				Keine Nachrichten vorhanden. Bitte senden Sie eine Nachricht an den Kioskbot.
 			</p>
 		{:else}
@@ -155,117 +155,130 @@
 						'w-full max-w-2xl rounded-lg border border-gray-200  p-4 shadow-md',
 						message.issuer === 'bot' ? 'bg-secondary' : 'bg-white'
 					]}
+					in:fly|global={{ x: 800 * (message.issuer === 'bot' ? -1 : 1) }}
+					out:fade
 				>
-					<p class="mb-2 text-gray-700">{message.text}</p>
-					{#if message.sources && message.sources.length > 0}
-						<Sheet.Root>
-							<Sheet.Trigger class={buttonVariants({ variant: 'default' })}>Quellen</Sheet.Trigger>
-							<Sheet.Content class="w-full! sm:w-[540px]!">
-								<Sheet.Header>
-									<Sheet.Title>verwendete Quellen</Sheet.Title>
-								</Sheet.Header>
-								<div class=" h-full overflow-y-auto">
-									{#each message.sources as source}
-										<div class="mb-2">
-											<dl class="pl-2">
-												<dt class="text-sm font-semibold">Titel</dt>
-												<dd class="mb-1">
-													{#if source.document_url.startsWith('http')}
-														<a href={source.document_url} target="_blank" rel="noopener noreferrer">
-															{source.title}
-														</a>
-													{:else}
-														{source.title}
-													{/if}
-												</dd>
-												<dt class="text-xs font-semibold text-gray-500">Kategorie</dt>
-												<dd class="mb-1 text-xs">{source.category}</dd>
-												<dt class="text-xs font-semibold text-gray-500">Ort</dt>
-												<dd class="mb-1">{source.document_location}</dd>
-												<dt class="text-xs font-semibold text-gray-500">Datum</dt>
-												<dd class="mb-1 text-xs">{source.gathered_on}</dd>
-												<dt class="text-xs font-semibold text-gray-500">Score</dt>
-												<dd class="mb-1 text-xs">{source.score.toFixed(2)}</dd>
-												<dt class="text-xs font-semibold text-gray-500">Letzte Änderung</dt>
-												<dd class="mb-1 text-xs">{source.modified}</dd>
-												<dt class="text-xs font-semibold text-gray-500">Inhalt</dt>
-												<dd class="prose mb-1 text-xs">
-													{@html marked.parse(source.page_content)}
-												</dd>
-											</dl>
-										</div>
-									{/each}
-								</div>
-							</Sheet.Content>
-						</Sheet.Root>
-					{/if}
-					{#if message.issuer === 'bot'}
-						<p class="semibold mb-1">War die Antwort hilfreich?</p>
-						<form
-							onsubmit={(e) => {
-								e.preventDefault();
-								//validate if required fields are filled
-								if (helpful[index] === 0 && !feedbackMessages[index].trim()) {
-									alert(
-										'Bitte geben Sie einen Kommentar ein, wenn die Antwort nicht hilfreich war.'
-									);
-									return;
-								}
-								//submit feedback
-								submitFeedback(helpful[index] ?? 1, feedbackMessages[index]);
-							}}
-						>
-							<div class="mb-2 flex space-x-2">
-								<Button
-									variant={helpful[index] === 1 ? 'default' : 'outline'}
-									size="sm"
-									onclick={(e) => {
-										helpful[index] = 1;
-										e.preventDefault();
-										const target = e.target as HTMLTextAreaElement;
-										target.form?.requestSubmit();
-									}}
-								>
-									Ja
-								</Button>
-								<Button
-									variant={helpful[index] === 0 ? 'default' : 'outline'}
-									size="sm"
-									onclick={() => {
-										helpful[index] = 0;
-										document.getElementById(`feedback-comments_${index}`)?.focus();
-									}}
-								>
-									Nein
-								</Button>
+					{#if message.response}
+						{#await message.response}
+							<div transition:slide>
+								<Skeleton class="mb-2 h-4 w-[100px] rounded-full bg-neutral-400" />
+								<Skeleton class="mb-2 h-4 w-[200px] rounded-full bg-neutral-400" />
+								<Skeleton class="mb-2 h-4 w-[200px] rounded-full bg-neutral-400" />
 							</div>
-							<p class="mb-1">Kommentare</p>
-							<Textarea
-								placeholder="Feedback eingeben..."
-								bind:value={feedbackMessages[index]}
-								onkeydown={(e) => {
-									if (e.key === 'Enter' && !e.shiftKey) {
+						{:then content}
+							<div transition:slide use:focus>
+								<p class="mb-2 text-gray-700">{content.output}</p>
+								{#if content.sources && content.sources.length > 0}
+									<Sheet.Root>
+										<Sheet.Trigger class={buttonVariants({ variant: 'default' })}
+											>Quellen</Sheet.Trigger
+										>
+										<Sheet.Content class="w-full! sm:w-[540px]!">
+											<Sheet.Header>
+												<Sheet.Title>verwendete Quellen</Sheet.Title>
+											</Sheet.Header>
+											<div class=" h-full overflow-y-auto">
+												{#each content.sources as source}
+													<div class="mb-2">
+														<dl class="pl-2">
+															<dt class="text-sm font-semibold">Titel</dt>
+															<dd class="mb-1">
+																{#if source.document_url.startsWith('http')}
+																	<a
+																		href={source.document_url}
+																		target="_blank"
+																		rel="noopener noreferrer"
+																	>
+																		{source.title}
+																	</a>
+																{:else}
+																	{source.title}
+																{/if}
+															</dd>
+															<dt class="text-xs font-semibold text-gray-500">Kategorie</dt>
+															<dd class="mb-1 text-xs">{source.category}</dd>
+															<dt class="text-xs font-semibold text-gray-500">Ort</dt>
+															<dd class="mb-1">{source.document_location}</dd>
+															<dt class="text-xs font-semibold text-gray-500">Datum</dt>
+															<dd class="mb-1 text-xs">{source.gathered_on}</dd>
+															<dt class="text-xs font-semibold text-gray-500">Score</dt>
+															<dd class="mb-1 text-xs">{source.score.toFixed(2)}</dd>
+															<dt class="text-xs font-semibold text-gray-500">Letzte Änderung</dt>
+															<dd class="mb-1 text-xs">{source.modified}</dd>
+															<dt class="text-xs font-semibold text-gray-500">Inhalt</dt>
+															<dd class="prose mb-1 text-xs">
+																{@html marked.parse(source.page_content)}
+															</dd>
+														</dl>
+													</div>
+												{/each}
+											</div>
+										</Sheet.Content>
+									</Sheet.Root>
+								{/if}
+								<p class="semibold mb-1">War die Antwort hilfreich?</p>
+								<form
+									onsubmit={(e) => {
 										e.preventDefault();
-										const target = e.target as HTMLTextAreaElement;
-										target.form?.requestSubmit();
-									}
-								}}
-								required={helpful[index] === 0}
-								id="feedback-comments_{index}"
-								class="mb-2"
-							/>
-							<Button type="submit" size="sm">Absenden</Button>
-						</form>
+										//validate if required fields are filled
+										if (helpful[index] === 0 && !feedbackMessages[index].trim()) {
+											alert(
+												'Bitte geben Sie einen Kommentar ein, wenn die Antwort nicht hilfreich war.'
+											);
+											return;
+										}
+										//submit feedback
+										submitFeedback(helpful[index] ?? 1, feedbackMessages[index]);
+									}}
+								>
+									<div class="mb-2 flex space-x-2">
+										<Button
+											variant={helpful[index] === 1 ? 'default' : 'outline'}
+											size="sm"
+											onclick={(e) => {
+												helpful[index] = 1;
+												e.preventDefault();
+												const target = e.target as HTMLTextAreaElement;
+												target.form?.requestSubmit();
+											}}
+										>
+											Ja
+										</Button>
+										<Button
+											variant={helpful[index] === 0 ? 'default' : 'outline'}
+											size="sm"
+											onclick={() => {
+												helpful[index] = 0;
+												document.getElementById(`feedback-comments_${index}`)?.focus();
+											}}
+										>
+											Nein
+										</Button>
+									</div>
+									<p class="mb-1">Kommentare</p>
+									<Textarea
+										placeholder="Feedback eingeben..."
+										bind:value={feedbackMessages[index]}
+										onkeydown={(e) => {
+											if (e.key === 'Enter' && !e.shiftKey) {
+												e.preventDefault();
+												const target = e.target as HTMLTextAreaElement;
+												target.form?.requestSubmit();
+											}
+										}}
+										required={helpful[index] === 0}
+										id="feedback-comments_{index}"
+										class="mb-2"
+									/>
+									<Button type="submit" size="sm">Absenden</Button>
+								</form>
+							</div>
+						{/await}
+					{:else}
+						<p class="mb-2 text-gray-700">{message.text}</p>
 					{/if}
 				</div>
 			{/each}
-			{#if locked}
-				<div class="w-full max-w-2xl rounded-lg border border-gray-200 bg-white p-4 shadow-md">
-					<Skeleton class="mb-2 h-4 w-[100px] rounded-full" />
-					<Skeleton class="mb-2 h-4 w-[200px] rounded-full" />
-					<Skeleton class="mb-2 h-4 w-[200px] rounded-full" />
-				</div>
-			{/if}
 		{/if}
 		<form
 			onsubmit={async (e) => {
@@ -280,26 +293,30 @@
 					}
 				];
 				// Call the RAG agent API
-				const response = await fetch(`${PUBLIC_API}/rag-agent`, {
+				const response = fetch(`${PUBLIC_API}/rag-agent`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify({ text: qVal, session_id: sessionID })
 				});
-				const answer = await response.json();
 				messages = [
 					...messages,
 					{
-						text: answer.output,
-						sources: answer.sources,
+						response: new Promise((resolve) => {
+							response.then((res) => {
+								res.json().then((data) => {
+									resolve(data);
+								});
+							});
+						}),
 						issuer: 'bot'
 					}
 				];
 				qVal = '';
 				locked = false;
 			}}
-			class="flex w-full max-w-2xl space-x-2"
+			class="sticky bottom-0 flex w-full max-w-2xl space-x-2 bg-white pt-4"
 		>
 			<Textarea
 				placeholder="Nachricht eingeben..."
