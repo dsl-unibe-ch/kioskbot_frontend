@@ -9,9 +9,9 @@
 	import Send from '@lucide/svelte/icons/send';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { marked } from 'marked';
-	import { fade, fly, scale, slide } from 'svelte/transition';
+	import { fade, fly, slide } from 'svelte/transition';
 
 	let { data } = $props();
 	let { sessionID } = data;
@@ -235,9 +235,9 @@
 										<Button
 											variant={helpful[index] === 1 ? 'default' : 'outline'}
 											size="sm"
-											onclick={(e) => {
+											onclick={async (e) => {
 												helpful[index] = 1;
-												e.preventDefault();
+												await tick();
 												const target = e.target as HTMLTextAreaElement;
 												target.form?.requestSubmit();
 											}}
@@ -270,7 +270,9 @@
 										id="feedback-comments_{index}"
 										class="mb-2"
 									/>
-									<Button type="submit" size="sm">Absenden</Button>
+									<Button type="submit" size="sm" disabled={typeof helpful[index] !== 'number'}
+										>Absenden</Button
+									>
 								</form>
 							</div>
 						{/await}
