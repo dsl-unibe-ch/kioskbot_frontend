@@ -8,7 +8,11 @@
 
 <Toaster />
 <div class="m-2 flex min-h-lvh flex-col justify-between sm:mx-4">
-	<header><img src={Logo} alt="Logo Universität Bern" /></header>
+	<header>
+		<a href="https://www.unibe.ch">
+			<img src={Logo} alt="Logo Universität Bern" />
+		</a>
+	</header>
 	<main class="@container/main container mx-auto flex flex-col">
 		{@render children()}
 	</main>
