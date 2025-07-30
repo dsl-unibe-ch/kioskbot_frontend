@@ -7,6 +7,7 @@
 	import { PUBLIC_API } from '$env/static/public';
 	import Send from '@lucide/svelte/icons/send';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { onMount } from 'svelte';
 	let { data } = $props();
 	let { sessionID } = data;
@@ -59,6 +60,77 @@
 	let helpful = $state(1);
 	let feedbackMessages = $state([]);
 </script>
+
+<AlertDialog.Root open>
+	<AlertDialog.Content class="w-full! max-w-full! sm:max-w-2xl!">
+		<AlertDialog.Header>
+			<AlertDialog.Title>Nutzungsbedingungen und Haftungsausschluss</AlertDialog.Title>
+			<AlertDialog.Description>
+				Bitte lesen und akzeptieren Sie die folgenden Bedingungen, bevor Sie diese Anwendung nutzen:
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<ul class="max-h-60 list-disc space-y-2 overflow-y-auto pl-6">
+			<li>
+				Diese Anwendung dient als Unterstützung bei der Suche nach Informationen im Zusammenhang mit
+				den Aktivitäten der Abteilung für Qualitätssicherung und -entwicklung der Universität Bern.
+			</li>
+			<li>Diese Anwendung richtet sich an die Angehörigen der Universität Bern.</li>
+			<li>
+				Der Chatbot ist für Informationen allgemeiner Art und nicht für persönliche oder
+				vertrauliche Anfragen vorgesehen. In solchen Fällen wenden Sie sich bitte direkt an die
+				entsprechende Abteilung.
+			</li>
+			<li>
+				Der Chatbot basiert auf einem Dienst von Microsoft Azure OpenAI (vgl. auch Data, privacy,
+				and security for Azure OpenAI Service). Bei der Nutzung des Chatbots werden folgende Angaben
+				zwecks Qualitätssicherung und Weiterentwicklung/Verbesserung der Anwendung aufgezeichnet:
+				anonyme User-ID; jeweilige Organisationseinheit der Universität (Benutzergruppe); Inhalt der
+				Benutzeranfrage; Antwort des Chatbots, Feedback (Bewertungen und Kommentare) an den Chatbot.
+			</li>
+			<li>
+				Durch die Nutzung dieser Anwendung willigen Sie in die oben genannte Bearbeitung Ihrer
+				Nutzerdaten ein.
+			</li>
+			<li>
+				Die von dieser Anwendung bereitgestellten Informationen dienen ausschliesslich
+				Informationszwecken. Die Universität Bern übernimmt keine Gewähr für die Richtigkeit,
+				Vollständigkeit oder Aktualität der bereitgestellten Informationen.
+			</li>
+			<li>
+				Antworten werden automatisiert von einem KI-System generiert und nicht von menschlichen
+				Mitarbeitenden überprüft. Wenn Ihre Anfrage komplex oder sensibel ist und/oder menschliche
+				Unterstützung erfordert, wenden Sie sich bitte direkt an die zuständige Stelle.
+			</li>
+			<li>
+				Die vom Chatbot bereitgestellten Informationen stellen keine rechtliche Beratung dar. Für
+				verbindliche Auskünfte wenden Sie sich bitte an die zuständigen Abteilungen und offiziellen
+				Kanäle der Universität.
+			</li>
+			<li>
+				Die Universität Bern haftet nicht für Folgen, die sich aus der Nutzung der vom Chatbot
+				bereitgestellten Informationen ergeben.
+			</li>
+			<li>
+				Jeglicher Missbrauch des Dienstes, insbesondere im Zusammenhang mit illegalen Aktivitäten
+				oder der Verbreitung schädlicher Inhalte, ist untersagt. Es gelten die Weisungen der
+				Universitätsleitung zur Benutzung der IT-Ressourcen an der Universität Bern. Abrufbar unter:
+				ul_ws_benutzung_it_ressourcen_ger.pdf
+			</li>
+			<li>
+				Die Universität Bern behält sich das Recht vor, diese Nutzungsbedingungen jederzeit zu
+				aktualisieren. Änderungen werden auf dieser Seite veröffentlicht.
+			</li>
+		</ul>
+		<p class="mt-4">
+			Indem Sie auf „Akzeptieren“ klicken, bestätigen Sie, dass Sie diese Bedingungen gelesen,
+			verstanden und akzeptiert haben.
+		</p>
+
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel>Akzeptieren</AlertDialog.Cancel>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>
 
 <h1 class="mb-9 scroll-m-20 text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
 	Kioskbot der Universität Bern
