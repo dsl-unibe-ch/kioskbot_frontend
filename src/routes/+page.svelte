@@ -9,6 +9,7 @@
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { onMount } from 'svelte';
+	import { marked } from 'marked';
 	let { data } = $props();
 	let { sessionID } = data;
 	let messages: {
@@ -157,19 +158,14 @@
 								<Sheet.Header>
 									<Sheet.Title>verwendete Quellen</Sheet.Title>
 								</Sheet.Header>
-								<div class="h-full overflow-y-auto">
+								<div class=" h-full overflow-y-auto">
 									{#each message.sources as source}
 										<div class="mb-2">
 											<dl class="pl-2">
 												<dt class="text-sm font-semibold">Titel</dt>
 												<dd class="mb-1">
 													{#if source.document_url.startsWith('http')}
-														<a
-															href={source.document_url}
-															class="text-blue-600 hover:underline"
-															target="_blank"
-															rel="noopener noreferrer"
-														>
+														<a href={source.document_url} target="_blank" rel="noopener noreferrer">
 															{source.title}
 														</a>
 													{:else}
@@ -187,7 +183,9 @@
 												<dt class="text-xs font-semibold text-gray-500">Letzte Änderung</dt>
 												<dd class="mb-1 text-xs">{source.modified}</dd>
 												<dt class="text-xs font-semibold text-gray-500">Inhalt</dt>
-												<dd class="mb-1 text-xs">{source.page_content}</dd>
+												<dd class="prose mb-1 text-xs">
+													{@html marked.parse(source.page_content)}
+												</dd>
 											</dl>
 										</div>
 									{/each}
