@@ -140,8 +140,12 @@
 <h1
 	class="sticky top-0 z-10 mb-9 scroll-m-20 bg-white pb-4 text-center text-4xl font-extrabold tracking-tight lg:text-5xl"
 >
-	Kioskbot der Universität Bern
+	Information Kioskbot der Universität Bern
+	<p class="mt-2 text-lg font-medium">
+		Der Bot beantwortet Fragen rund um die Abteilung für Qualitätssicherung und -entwicklung.
+	</p>
 </h1>
+
 <div class="flex flex-col items-center justify-center gap-4 p-4">
 	{#if sessionID}
 		{#if messages.length === 0}
