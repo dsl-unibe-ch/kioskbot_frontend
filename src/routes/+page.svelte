@@ -2,6 +2,7 @@
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import { Skeleton } from '$lib/components/ui/skeleton/index.js';
+	import { toast } from 'svelte-sonner';
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import { TextareaAutosize } from 'runed';
 	import { PUBLIC_API } from '$env/static/public';
@@ -52,13 +53,18 @@
 			})
 		});
 		if (response.ok) {
-			console.log('Feedback sent successfully');
+			toast.success('Feedback erfolgreich gesendet.');
+			feedbackMessages = feedbackMessages.map((msg, index) =>
+				index === messages.length - 1 ? '' : msg
+			);
 		} else {
-			console.error('Failed to send feedback');
+			toast.error('Fehler beim Senden des Feedbacks. Bitte versuchen Sie es später erneut.');
 		}
+
+		return response.ok;
 	};
 
-	let helpful = $state(1);
+	let helpful: number[] = $state([]);
 	let feedbackMessages: string[] = $state([]);
 </script>
 
@@ -199,22 +205,22 @@
 							onsubmit={(e) => {
 								e.preventDefault();
 								//validate if required fields are filled
-								if (helpful === 0 && !feedbackMessages[index].trim()) {
+								if (helpful[index] === 0 && !feedbackMessages[index].trim()) {
 									alert(
 										'Bitte geben Sie einen Kommentar ein, wenn die Antwort nicht hilfreich war.'
 									);
 									return;
 								}
 								//submit feedback
-								submitFeedback(helpful, feedbackMessages[index]);
+								submitFeedback(helpful[index] ?? 1, feedbackMessages[index]);
 							}}
 						>
 							<div class="mb-2 flex space-x-2">
 								<Button
-									variant="outline"
+									variant={helpful[index] === 1 ? 'default' : 'outline'}
 									size="sm"
 									onclick={(e) => {
-										helpful = 1;
+										helpful[index] = 1;
 										e.preventDefault();
 										const target = e.target as HTMLTextAreaElement;
 										target.form?.requestSubmit();
@@ -223,10 +229,10 @@
 									Ja
 								</Button>
 								<Button
-									variant="outline"
+									variant={helpful[index] === 0 ? 'default' : 'outline'}
 									size="sm"
 									onclick={() => {
-										helpful = 0;
+										helpful[index] = 0;
 										document.getElementById(`feedback-comments_${index}`)?.focus();
 									}}
 								>
@@ -244,7 +250,7 @@
 										target.form?.requestSubmit();
 									}
 								}}
-								required={helpful === 0}
+								required={helpful[index] === 0}
 								id="feedback-comments_{index}"
 								class="mb-2"
 							/>
