@@ -140,7 +140,7 @@
 <h1
 	class="sticky top-0 z-10 mb-9 scroll-m-20 bg-white pb-4 text-center text-4xl font-extrabold tracking-tight lg:text-5xl"
 >
-	Information Kioskbot der Universität Bern
+	Informationskioskbot der Universität Bern
 	<p class="mt-2 text-lg font-medium">
 		Der Bot beantwortet Fragen rund um die Abteilung für Qualitätssicherung und -entwicklung.
 	</p>
@@ -150,7 +150,7 @@
 	{#if sessionID}
 		{#if messages.length === 0}
 			<p class="p-4 text-gray-500" in:fly|global={{ x: 800 }} out:fade>
-				Keine Nachrichten vorhanden. Bitte senden Sie eine Nachricht an den Kioskbot.
+				Keine Nachrichten vorhanden. Bitte senden Sie eine Nachricht an den Informationskioskbot.
 			</p>
 		{:else}
 			{#each messages as message, index}
