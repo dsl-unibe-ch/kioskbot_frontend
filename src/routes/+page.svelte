@@ -171,7 +171,7 @@
 							</div>
 						{:then content}
 							<div transition:slide use:focus>
-								<div class="prose mb-2 text-gray-700">
+								<div class="prose mb-2 text-gray-700 [&_a]:wrap-break-word">
 									{@html marked.parse(content.output)}
 								</div>
 								{#if content.sources && content.sources.length > 0}
