@@ -171,7 +171,9 @@
 							</div>
 						{:then content}
 							<div transition:slide use:focus>
-								<p class="mb-2 text-gray-700">{content.output}</p>
+								<div class="prose mb-2 text-gray-700">
+									{@html marked.parse(content.output)}
+								</div>
 								{#if content.sources && content.sources.length > 0}
 									<Sheet.Root>
 										<Sheet.Trigger class={buttonVariants({ variant: 'default' })}
