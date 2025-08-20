@@ -61,8 +61,50 @@
 	let feedbackMessages: string[] = $state([]);
 
 	const focus = (node: HTMLElement) => {
-		console.log('Focusing node:', node);
 		node.scrollIntoView();
+	};
+
+	const submitMessage = async (e: Event) => {
+		e.preventDefault();
+		if (!qVal.trim()) return; // Ignore empty messages
+		locked = true;
+		messages = [
+			...messages,
+			{
+				text: qVal,
+				issuer: 'user'
+			}
+		];
+		// Call the RAG agent API
+		const response = fetch(`${PUBLIC_API}/rag-agent`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ text: qVal, session_id: sessionID })
+		});
+		messages = [
+			...messages,
+			{
+				response: new Promise((resolve) => {
+					response.then((res) => {
+						if (res.ok) {
+							res.json().then((data) => {
+								resolve(data);
+							});
+						} else {
+							toast.error('Fehler beim Abrufen der Antwort. Bitte versuchen Sie es später erneut.');
+							resolve({
+								output: 'Es gab einen Fehler bei der Anfrage. Bitte versuchen Sie es später erneut.'
+							});
+						}
+					});
+				}),
+				issuer: 'bot'
+			}
+		];
+		qVal = '';
+		locked = false;
 	};
 </script>
 
@@ -289,41 +331,7 @@
 			{/each}
 		{/if}
 		<form
-			onsubmit={async (e) => {
-				e.preventDefault();
-				if (!qVal.trim()) return; // Ignore empty messages
-				locked = true;
-				messages = [
-					...messages,
-					{
-						text: qVal,
-						issuer: 'user'
-					}
-				];
-				// Call the RAG agent API
-				const response = fetch(`${PUBLIC_API}/rag-agent`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ text: qVal, session_id: sessionID })
-				});
-				messages = [
-					...messages,
-					{
-						response: new Promise((resolve) => {
-							response.then((res) => {
-								res.json().then((data) => {
-									resolve(data);
-								});
-							});
-						}),
-						issuer: 'bot'
-					}
-				];
-				qVal = '';
-				locked = false;
-			}}
+			onsubmit={submitMessage}
 			class="sticky bottom-0 flex w-full max-w-2xl space-x-2 bg-white pt-4"
 		>
 			<Textarea
