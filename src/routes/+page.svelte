@@ -128,11 +128,15 @@
 				entsprechende Abteilung.
 			</li>
 			<li>
-				Der Chatbot basiert auf einem Dienst von Microsoft Azure OpenAI (vgl. auch Data, privacy,
-				and security for Azure OpenAI Service). Bei der Nutzung des Chatbots werden folgende Angaben
-				zwecks Qualitätssicherung und Weiterentwicklung/Verbesserung der Anwendung aufgezeichnet:
-				anonyme User-ID; jeweilige Organisationseinheit der Universität (Benutzergruppe); Inhalt der
-				Benutzeranfrage; Antwort des Chatbots, Feedback (Bewertungen und Kommentare) an den Chatbot.
+				Der Chatbot basiert auf einem Dienst von Microsoft Azure OpenAI (vgl. auch <a
+					href="https://learn.microsoft.com/en-us/azure/ai-foundry/responsible-ai/openai/data-privacy?tabs=azure-portal"
+					target="_blank"
+				>
+					Data, privacy, and security for Azure OpenAI Service
+				</a>). Bei der Nutzung des Chatbots werden folgende Angaben zwecks Qualitätssicherung und
+				Weiterentwicklung/Verbesserung der Anwendung aufgezeichnet: anonyme User-ID; jeweilige
+				Organisationseinheit der Universität (Benutzergruppe); Inhalt der Benutzeranfrage; Antwort
+				des Chatbots, Feedback (Bewertungen und Kommentare) an den Chatbot.
 			</li>
 			<li>
 				Durch die Nutzung dieser Anwendung willigen Sie in die oben genannte Bearbeitung Ihrer
@@ -161,7 +165,10 @@
 				Jeglicher Missbrauch des Dienstes, insbesondere im Zusammenhang mit illegalen Aktivitäten
 				oder der Verbreitung schädlicher Inhalte, ist untersagt. Es gelten die Weisungen der
 				Universitätsleitung zur Benutzung der IT-Ressourcen an der Universität Bern. Abrufbar unter:
-				ul_ws_benutzung_it_ressourcen_ger.pdf
+				<a
+					href="https://www.unibe.ch/unibe/portal/content/e152701/e332575/e332595/e371241/ul_ws_benutzung_it_ressourcen_ger.pdf"
+					target="_blank">ul_ws_benutzung_it_ressourcen_ger.pdf</a
+				>
 			</li>
 			<li>
 				Die Universität Bern behält sich das Recht vor, diese Nutzungsbedingungen jederzeit zu
