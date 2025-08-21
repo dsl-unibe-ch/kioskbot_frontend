@@ -290,11 +290,11 @@
 										<Button
 											variant={helpful[index] === 1 ? 'default' : 'outline'}
 											size="sm"
-											onclick={async (e) => {
+											onclick={async (e: Event) => {
 												helpful[index] = 1;
 												await tick();
-												const target = e.target as HTMLTextAreaElement;
-												target.form?.requestSubmit();
+												const target = e.target as HTMLButtonElement;
+												target?.form?.requestSubmit();
 											}}
 										>
 											Ja
@@ -361,6 +361,10 @@
 				{/if}
 			</Button>
 		</form>
+		<p class="max-w-2xl text-sm text-gray-500">
+			Alle Angaben ohne Gewähr. Bitte überprüfen Sie die Informationen auf der offiziellen Webseite
+			der Universität Bern.
+		</p>
 	{:else}
 		<p>
 			Der Chatbot ist momentan nur im Uni-Netz der Universität Bern erreichbar. Bitte loggen sie
