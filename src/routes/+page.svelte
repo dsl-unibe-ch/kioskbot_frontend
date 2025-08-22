@@ -363,7 +363,8 @@
 		</form>
 		<p class="max-w-2xl text-sm text-gray-500">
 			Alle Angaben ohne Gewähr. Bitte überprüfen Sie die Informationen auf der offiziellen Webseite
-			der Universität Bern.
+			der Universität Bern. Bei Fragen oder Support wenden Sie sich bitte an das DSL
+			<a href="mailto:support.dsl@unibe.ch">support.dsl@unibe.ch</a>.
 		</p>
 	{:else}
 		<p>
