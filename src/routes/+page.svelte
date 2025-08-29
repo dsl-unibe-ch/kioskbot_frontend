@@ -189,7 +189,7 @@
 <h1
 	class="sticky top-0 z-10 mb-9 scroll-m-20 bg-white pb-4 text-center text-3xl font-extrabold tracking-tight text-balance lg:text-5xl"
 >
-	Informationskioskbot der Universität Bern
+	Informationskiosk der Universität Bern
 	<p class="mt-2 text-lg font-medium">
 		Der Bot beantwortet Fragen rund um die Abteilung für Qualitätssicherung und -entwicklung.
 	</p>
