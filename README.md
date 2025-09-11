@@ -1,38 +1,45 @@
-# sv
+# KioskBot Frontend
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Minimal setup to install and run the app with pnpm.
 
-## Creating a project
+## Quickstart
 
-If you're seeing this, you've probably already done this step. Congrats!
+1. Prerequisites
 
-```bash
-# create a new project in the current directory
-npx sv create
+- Node.js 18+ and pnpm installed
 
-# create a new project in my-app
-npx sv create my-app
+2. Configure environment
+
+- Copy `.env.example` to `.env` and set the backend URL:
+  - `PUBLIC_API` — the backend base URL (including protocol), e.g. `https://your-backend.example.com`
+
+3. Install dependencies
+
+```pwsh
+pnpm install
 ```
 
-## Developing
+4. Start the dev server
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```pwsh
+pnpm dev
 ```
 
-## Building
+The app will be available on http://localhost:5173 (default).
 
-To create a production version of your app:
+## Build and preview
 
-```bash
-npm run build
+```pwsh
+pnpm build
+pnpm preview
 ```
 
-You can preview the production build with `npm run preview`.
+## Useful scripts
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- `pnpm check` — Svelte type checks
+- `pnpm lint` — Prettier check + ESLint
+- `pnpm format` — Format files with Prettier
+
+## Environment variables
+
+- `PUBLIC_API` is required and is exposed to the browser. Make sure it points to your backend (and that CORS is configured accordingly).
