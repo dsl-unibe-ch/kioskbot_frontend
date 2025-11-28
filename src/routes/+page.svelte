@@ -12,9 +12,8 @@
 	import { onMount, tick } from 'svelte';
 	import { marked } from 'marked';
 	import { fade, fly, slide } from 'svelte/transition';
+	import { page } from '$app/state';
 
-	let { data } = $props();
-	let { sessionID } = data;
 	let messages: {
 		text?: string;
 		response?: Promise<any>;
@@ -23,14 +22,28 @@
 	let qVal = $state('');
 
 	let locked = $state(false);
-
+	let origin = $derived(page.url.searchParams.get('url') || '');
+	let sessionID = $state(null);
 	onMount(async () => {
 		const qEl = document.querySelector('textarea');
-		if (!qEl) return;
-		new TextareaAutosize({
-			element: () => qEl,
-			input: () => qVal
-		});
+		if (qEl) {
+			new TextareaAutosize({
+				element: () => qEl,
+				input: () => qVal
+			});
+		}
+		console.log('Origin:', origin);
+		try {
+			// Attempt to fetch the API root to check if the server is reachable
+			const res = await fetch(`${PUBLIC_API}/initialize-agent?origin=${origin}`);
+			if (res.ok) {
+				sessionID = (await res.json())?.session_id;
+				console.log('Session ID:', sessionID);
+			}
+		} catch (error) {
+			sessionID = null;
+			console.error(error);
+		}
 	});
 
 	const submitFeedback = async (rating: number, comments: string) => {
@@ -43,7 +56,7 @@
 				session_id: sessionID,
 				rating,
 				comments,
-				origin: data.origin
+				origin
 			})
 		});
 		if (response.ok) {
@@ -82,7 +95,7 @@
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ text: qVal, session_id: sessionID, origin: data.origin })
+			body: JSON.stringify({ text: qVal, session_id: sessionID, origin })
 		});
 		messages = [
 			...messages,
