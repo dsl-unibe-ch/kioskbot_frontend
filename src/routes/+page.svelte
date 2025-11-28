@@ -13,6 +13,7 @@
 	import { marked } from 'marked';
 	import { fade, fly, slide } from 'svelte/transition';
 	import { page } from '$app/state';
+	import { building } from '$app/environment';
 
 	let messages: {
 		text?: string;
@@ -22,7 +23,7 @@
 	let qVal = $state('');
 
 	let locked = $state(false);
-	let origin = $derived(page.url.searchParams.get('url') || '');
+	let origin = $derived(building ? '' : page.url.searchParams.get('url') || '');
 	let sessionID = $state(null);
 	onMount(async () => {
 		const qEl = document.querySelector('textarea');
