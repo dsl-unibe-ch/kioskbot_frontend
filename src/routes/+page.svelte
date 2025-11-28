@@ -34,7 +34,7 @@
 	});
 
 	const submitFeedback = async (rating: number, comments: string) => {
-		const response = await fetch(`${PUBLIC_API}/send_feedback`, {
+		const response = await fetch(`${PUBLIC_API}/send-feedback`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -76,7 +76,7 @@
 			}
 		];
 		// Call the RAG agent API
-		const response = fetch(`${PUBLIC_API}/rag-agent`, {
+		const response = fetch(`${PUBLIC_API}/invoke-agent`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

@@ -5,7 +5,7 @@ export const load = (async ({ fetch }) => {
 	let sessionID = null;
 	try {
 		// Attempt to fetch the API root to check if the server is reachable
-		const res = await fetch(`${PUBLIC_API}/`);
+		const res = await fetch(`${PUBLIC_API}/initialize-agent`);
 		if (res.ok) {
 			sessionID = (await res.json())?.session_id;
 			console.log('Session ID:', sessionID);
