@@ -42,7 +42,8 @@
 			body: JSON.stringify({
 				session_id: sessionID,
 				rating,
-				comments
+				comments,
+				origin: data.origin
 			})
 		});
 		if (response.ok) {
@@ -81,7 +82,7 @@
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ text: qVal, session_id: sessionID })
+			body: JSON.stringify({ text: qVal, session_id: sessionID, origin: data.origin })
 		});
 		messages = [
 			...messages,

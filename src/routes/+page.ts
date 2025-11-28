@@ -1,11 +1,12 @@
 import { PUBLIC_API } from '$env/static/public';
 import type { PageLoad } from './$types';
 
-export const load = (async ({ fetch }) => {
+export const load = (async ({ fetch, url }) => {
+	const origin = url.searchParams.get('url') || '';
 	let sessionID = null;
 	try {
 		// Attempt to fetch the API root to check if the server is reachable
-		const res = await fetch(`${PUBLIC_API}/initialize-agent`);
+		const res = await fetch(`${PUBLIC_API}/initialize-agent?origin=${origin}`);
 		if (res.ok) {
 			sessionID = (await res.json())?.session_id;
 			console.log('Session ID:', sessionID);
@@ -15,6 +16,7 @@ export const load = (async ({ fetch }) => {
 		console.error(error);
 	}
 	return {
-		sessionID
+		sessionID,
+		origin
 	};
 }) satisfies PageLoad;
