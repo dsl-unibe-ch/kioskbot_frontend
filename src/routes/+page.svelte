@@ -389,6 +389,13 @@
 			der Universität Bern. Bei Fragen oder Support wenden Sie sich bitte an das DSL
 			<a href="mailto:kb-support.dsl@unibe.ch">kb-support.dsl@unibe.ch</a>.
 		</p>
+		<p class="max-w-2xl text-sm text-gray-500">
+			Der Informationskioskbot ist ein KI-gestützter Chatbot, der Benutzern hilft, Informationen,
+			die mit der Universität Bern zusammenhängen, schnell und einfach zu finden. Er wird vom <a
+				href="https://dsl.unibe.ch"
+				target="_blank">Data Science Lab (DSL)</a
+			> entwickelt.
+		</p>
 	{:else}
 		<p>
 			Der Chatbot ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut. Kontaktieren

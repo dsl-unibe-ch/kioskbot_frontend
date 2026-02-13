@@ -7,8 +7,8 @@
 </script>
 
 <Toaster />
-<div class="m-2 flex min-h-lvh flex-col justify-between sm:mx-4">
-	<header>
+<div class="flex min-h-lvh flex-col justify-between sm:mx-4">
+	<header class="my-2">
 		<a href="https://www.unibe.ch">
 			<img src={Logo} alt="Logo Universität Bern" />
 		</a>
