@@ -229,9 +229,9 @@
 					{#if message.response}
 						{#await message.response}
 							<div transition:slide>
-								<Skeleton class="mb-2 h-4 w-[100px] rounded-full bg-neutral-400" />
-								<Skeleton class="mb-2 h-4 w-[200px] rounded-full bg-neutral-400" />
-								<Skeleton class="mb-2 h-4 w-[200px] rounded-full bg-neutral-400" />
+								<Skeleton class="mb-2 h-4 w-25 rounded-full bg-neutral-400" />
+								<Skeleton class="mb-2 h-4 w-50 rounded-full bg-neutral-400" />
+								<Skeleton class="mb-2 h-4 w-50 rounded-full bg-neutral-400" />
 							</div>
 						{:then content}
 							<div transition:slide use:focus>
@@ -243,7 +243,7 @@
 										<Sheet.Trigger class={buttonVariants({ variant: 'default' })}
 											>Quellen</Sheet.Trigger
 										>
-										<Sheet.Content class="w-full! sm:w-[540px]!">
+										<Sheet.Content class="w-full! sm:w-135!">
 											<Sheet.Header>
 												<Sheet.Title>verwendete Quellen</Sheet.Title>
 											</Sheet.Header>
@@ -379,12 +379,14 @@
 		<p class="max-w-2xl text-sm text-gray-500">
 			Alle Angaben ohne Gewähr. Bitte überprüfen Sie die Informationen auf der offiziellen Webseite
 			der Universität Bern. Bei Fragen oder Support wenden Sie sich bitte an das DSL
-			<a href="mailto:support.dsl@unibe.ch">support.dsl@unibe.ch</a>.
+			<a href="mailto:kb-support.dsl@unibe.ch">kb-support.dsl@unibe.ch</a>.
 		</p>
 	{:else}
 		<p>
-			Der Chatbot ist momentan nur im Uni-Netz der Universität Bern erreichbar. Bitte loggen sie
-			sich via VPN ins Uni-Netz ein und laden Sie die Seite erneut.
+			Der Chatbot ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut. Kontaktieren
+			Sie bei anhaltenden Problemen <a href="mailto:kb-support.dsl@unibe.ch"
+				>kb-support.dsl@unibe.ch</a
+			>.
 		</p>
 	{/if}
 </div>
