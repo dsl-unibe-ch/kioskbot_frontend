@@ -210,10 +210,10 @@
 >
 	Informationskiosk der Universität Bern
 	<p class="mt-2 text-lg font-medium">
-		{#if customerName === 'quality'}
-			Der Bot beantwortet Fragen rund um die Abteilung für Qualitätssicherung und -entwicklung.
-		{:else}
+		{#if customerName === 'innovation'}
 			Der Bot beantwortet Fragen rund um das Innovation Office.
+		{:else}
+			Der Bot beantwortet Fragen rund um die Abteilung für Qualitätssicherung und -entwicklung.
 		{/if}
 	</p>
 </h1>
