@@ -25,6 +25,8 @@
 	let locked = $state(false);
 	let origin = $derived(building ? '' : page.url.searchParams.get('url') || '');
 	let sessionID = $state(null);
+	let customerName = $state('');
+
 	onMount(async () => {
 		const qEl = document.querySelector('textarea');
 		if (qEl) {
@@ -38,8 +40,10 @@
 			// Attempt to fetch the API root to check if the server is reachable
 			const res = await fetch(`${PUBLIC_API}/initialize-agent?origin=${origin}`);
 			if (res.ok) {
-				sessionID = (await res.json())?.session_id;
-				console.log('Session ID:', sessionID);
+				const data = await res.json();
+				sessionID = data?.session_id;
+				customerName = data?.customer_name || '';
+				console.log(data);
 			}
 		} catch (error) {
 			sessionID = null;
@@ -206,7 +210,11 @@
 >
 	Informationskiosk der Universität Bern
 	<p class="mt-2 text-lg font-medium">
-		Der Bot beantwortet Fragen rund um die Abteilung für Qualitätssicherung und -entwicklung.
+		{#if customerName === 'quality'}
+			Der Bot beantwortet Fragen rund um die Abteilung für Qualitätssicherung und -entwicklung.
+		{:else}
+			Der Bot beantwortet Fragen rund um das Innovation Office.
+		{/if}
 	</p>
 </h1>
 
