@@ -12,9 +12,9 @@
 	import { onMount, tick } from 'svelte';
 	import { marked } from 'marked';
 	import { fade, fly, slide } from 'svelte/transition';
+	import { page } from '$app/state';
+	import { building } from '$app/environment';
 
-	let { data } = $props();
-	let { sessionID } = data;
 	let messages: {
 		text?: string;
 		response?: Promise<any>;
@@ -23,18 +23,36 @@
 	let qVal = $state('');
 
 	let locked = $state(false);
+	let origin = $derived(building ? '' : page.url.searchParams.get('url') || '');
+	let sessionID = $state(null);
+	let customerName = $state('');
 
 	onMount(async () => {
 		const qEl = document.querySelector('textarea');
-		if (!qEl) return;
-		new TextareaAutosize({
-			element: () => qEl,
-			input: () => qVal
-		});
+		if (qEl) {
+			new TextareaAutosize({
+				element: () => qEl,
+				input: () => qVal
+			});
+		}
+		console.log('Origin:', origin);
+		try {
+			// Attempt to fetch the API root to check if the server is reachable
+			const res = await fetch(`${PUBLIC_API}/initialize-agent?origin=${origin}`);
+			if (res.ok) {
+				const data = await res.json();
+				sessionID = data?.session_id;
+				customerName = data?.customer_name || '';
+				console.log(data);
+			}
+		} catch (error) {
+			sessionID = null;
+			console.error(error);
+		}
 	});
 
 	const submitFeedback = async (rating: number, comments: string) => {
-		const response = await fetch(`${PUBLIC_API}/send_feedback`, {
+		const response = await fetch(`${PUBLIC_API}/send-feedback`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -42,7 +60,8 @@
 			body: JSON.stringify({
 				session_id: sessionID,
 				rating,
-				comments
+				comments,
+				origin
 			})
 		});
 		if (response.ok) {
@@ -76,12 +95,12 @@
 			}
 		];
 		// Call the RAG agent API
-		const response = fetch(`${PUBLIC_API}/rag-agent`, {
+		const response = fetch(`${PUBLIC_API}/invoke-agent`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ text: qVal, session_id: sessionID })
+			body: JSON.stringify({ text: qVal, session_id: sessionID, origin })
 		});
 		messages = [
 			...messages,
@@ -191,7 +210,11 @@
 >
 	Informationskiosk der Universität Bern
 	<p class="mt-2 text-lg font-medium">
-		Der Bot beantwortet Fragen rund um die Abteilung für Qualitätssicherung und -entwicklung.
+		{#if customerName === 'quality'}
+			Der Bot beantwortet Fragen rund um die Abteilung für Qualitätssicherung und -entwicklung.
+		{:else}
+			Der Bot beantwortet Fragen rund um das Innovation Office.
+		{/if}
 	</p>
 </h1>
 
@@ -214,9 +237,9 @@
 					{#if message.response}
 						{#await message.response}
 							<div transition:slide>
-								<Skeleton class="mb-2 h-4 w-[100px] rounded-full bg-neutral-400" />
-								<Skeleton class="mb-2 h-4 w-[200px] rounded-full bg-neutral-400" />
-								<Skeleton class="mb-2 h-4 w-[200px] rounded-full bg-neutral-400" />
+								<Skeleton class="mb-2 h-4 w-25 rounded-full bg-neutral-400" />
+								<Skeleton class="mb-2 h-4 w-50 rounded-full bg-neutral-400" />
+								<Skeleton class="mb-2 h-4 w-50 rounded-full bg-neutral-400" />
 							</div>
 						{:then content}
 							<div transition:slide use:focus>
@@ -228,7 +251,7 @@
 										<Sheet.Trigger class={buttonVariants({ variant: 'default' })}
 											>Quellen</Sheet.Trigger
 										>
-										<Sheet.Content class="w-full! sm:w-[540px]!">
+										<Sheet.Content class="w-full! sm:w-135!">
 											<Sheet.Header>
 												<Sheet.Title>verwendete Quellen</Sheet.Title>
 											</Sheet.Header>
@@ -364,12 +387,21 @@
 		<p class="max-w-2xl text-sm text-gray-500">
 			Alle Angaben ohne Gewähr. Bitte überprüfen Sie die Informationen auf der offiziellen Webseite
 			der Universität Bern. Bei Fragen oder Support wenden Sie sich bitte an das DSL
-			<a href="mailto:support.dsl@unibe.ch">support.dsl@unibe.ch</a>.
+			<a href="mailto:kb-support.dsl@unibe.ch">kb-support.dsl@unibe.ch</a>.
+		</p>
+		<p class="max-w-2xl text-sm text-gray-500">
+			Der Informationskioskbot ist ein KI-gestützter Chatbot, der Benutzern hilft, Informationen,
+			die mit der Universität Bern zusammenhängen, schnell und einfach zu finden. Er wird vom <a
+				href="https://dsl.unibe.ch"
+				target="_blank">Data Science Lab (DSL)</a
+			> entwickelt.
 		</p>
 	{:else}
 		<p>
-			Der Chatbot ist momentan nur im Uni-Netz der Universität Bern erreichbar. Bitte loggen sie
-			sich via VPN ins Uni-Netz ein und laden Sie die Seite erneut.
+			Der Chatbot ist derzeit nicht verfügbar. Bitte versuchen Sie es später erneut. Kontaktieren
+			Sie bei anhaltenden Problemen <a href="mailto:kb-support.dsl@unibe.ch"
+				>kb-support.dsl@unibe.ch</a
+			>.
 		</p>
 	{/if}
 </div>
