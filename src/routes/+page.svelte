@@ -239,8 +239,7 @@
 							<div transition:slide>
 								<LoaderCircle class="mx-auto size-12 animate-spin" />
 								<p class="prose text-gray-700">
-									Die künstliche Intelligenz sucht in den Dokumenten der Universität Bern nach einer
-									Antwort auf Ihre Frage...
+									Die künstliche Intelligenz sucht nach relevanten Informationen...
 								</p>
 							</div>
 						{:then content}
