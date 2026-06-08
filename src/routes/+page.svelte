@@ -237,9 +237,11 @@
 					{#if message.response}
 						{#await message.response}
 							<div transition:slide>
-								<Skeleton class="mb-2 h-4 w-25 rounded-full bg-neutral-400" />
-								<Skeleton class="mb-2 h-4 w-50 rounded-full bg-neutral-400" />
-								<Skeleton class="mb-2 h-4 w-50 rounded-full bg-neutral-400" />
+								<LoaderCircle class="mx-auto size-12 animate-spin" />
+								<p class="prose text-gray-700">
+									Die künstliche Intelligenz sucht in den Dokumenten der Universität Bern nach einer
+									Antwort auf Ihre Frage...
+								</p>
 							</div>
 						{:then content}
 							<div transition:slide use:focus>
